@@ -32,6 +32,20 @@ export const authApi = baseApi.injectEndpoints({
         data,
       }),
     }),
+    refreshToken: builder.mutation({
+      query: () => ({
+        url: '/auth/refresh',
+        method: 'POST',
+      }),
+      invalidatesTags: ['Auth'],
+    }),
+    logoutApi: builder.mutation({
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST',
+      }),
+      invalidatesTags: ['Auth'],
+    }),
     getMe: builder.query({
       query: () => '/auth/me',
       providesTags: ['Auth'],
@@ -44,5 +58,7 @@ export const {
   useRegisterMutation,
   useVerifyOtpMutation,
   useResendOtpMutation,
+  useRefreshTokenMutation,
+  useLogoutApiMutation,
   useGetMeQuery,
 } = authApi;

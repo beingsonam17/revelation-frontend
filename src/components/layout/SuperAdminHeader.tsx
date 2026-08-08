@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppDispatch, useAppSelector } from '@/store';
+import { useLogoutApiMutation } from '@/store/api/authApi';
 import { logout } from '@/store/slices/authSlice';
 import { ShieldAlert, LogOut, Phone, Crown } from 'lucide-react';
 
@@ -11,8 +12,14 @@ export const SuperAdminHeader: React.FC = () => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const [logoutApi] = useLogoutApiMutation();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await logoutApi(undefined).unwrap();
+    } catch (e) {
+      // Ignore network errors on logout
+    }
     dispatch(logout());
     router.push('/login');
   };

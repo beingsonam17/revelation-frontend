@@ -15,31 +15,11 @@ interface AuthState {
   isAuthenticated: boolean;
 }
 
-const getInitialToken = (): string | null => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem('revelation_token');
-  }
-  return null;
-};
-
-const getInitialUser = (): User | null => {
-  if (typeof window !== 'undefined') {
-    const raw = localStorage.getItem('revelation_user');
-    if (raw) {
-      try {
-        return JSON.parse(raw);
-      } catch (e) {
-        return null;
-      }
-    }
-  }
-  return null;
-};
-
+// Strictly NO localStorage — In-memory Redux state + HTTP-Only Cookie session
 const initialState: AuthState = {
-  token: getInitialToken(),
-  user: getInitialUser(),
-  isAuthenticated: !!getInitialToken(),
+  token: null,
+  user: null,
+  isAuthenticated: false,
 };
 
 export const authSlice = createSlice({
@@ -48,29 +28,23 @@ export const authSlice = createSlice({
   reducers: {
     setCredentials: (
       state,
-      action: PayloadAction<{ user: User; accessToken: string }>
+      action: PayloadAction<{ user: User; accessToken?: string | null }>
     ) => {
       state.user = action.payload.user;
-      state.token = action.payload.accessToken;
+      state.token = action.payload.accessToken || null;
       state.isAuthenticated = true;
-
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('revelation_token', action.payload.accessToken);
-        localStorage.setItem('revelation_user', JSON.stringify(action.payload.user));
-      }
+    },
+    setUser: (state, action: PayloadAction<User>) => {
+      state.user = action.payload;
+      state.isAuthenticated = true;
     },
     logout: (state) => {
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
-
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('revelation_token');
-        localStorage.removeItem('revelation_user');
-      }
     },
   },
 });
 
-export const { setCredentials, logout } = authSlice.actions;
+export const { setCredentials, setUser, logout } = authSlice.actions;
 export default authSlice.reducer;
