@@ -6,7 +6,8 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { SuperAdminHeader } from '@/components/layout/SuperAdminHeader';
 import { FormikField } from '@/components/forms/FormikField';
-import { useAppSelector } from '@/store';
+import { useAppSelector, useAppDispatch } from '@/store';
+import { useGetMeQuery } from '@/store/api/authApi';
 import {
   useGetAdminsQuery,
   useCreateAdminMutation,
@@ -41,10 +42,16 @@ const createAdminSchema = Yup.object().shape({
 
 export default function SuperAdminPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
 
+  const { data: meUser, isLoading: isCheckingAuth } = useGetMeQuery(undefined);
+
+  const activeUser = user || meUser;
+  const isSuperAdmin = activeUser?.role === 'SUPER_ADMIN';
+
   const { data: admins = [], isLoading, isError, refetch } = useGetAdminsQuery(undefined, {
-    skip: !isAuthenticated || user?.role !== 'SUPER_ADMIN',
+    skip: !isSuperAdmin,
   });
 
   const [createAdmin, { isLoading: isCreating }] = useCreateAdminMutation();
@@ -56,8 +63,19 @@ export default function SuperAdminPage() {
   const [modalError, setModalError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
+  if (isCheckingAuth && !isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+          <p className="text-xs font-semibold text-slate-400">Verifying session permissions...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Guarding
-  if (!isAuthenticated || user?.role !== 'SUPER_ADMIN') {
+  if (!isSuperAdmin) {
     return (
       <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
         <div className="bg-slate-900 border border-slate-800 p-8 rounded-3xl text-center max-w-md space-y-4">
