@@ -15,11 +15,19 @@ interface AuthState {
   isAuthenticated: boolean;
 }
 
-// Strictly NO localStorage — In-memory Redux state + HTTP-Only Cookie session
+const getStoredToken = () => {
+  if (typeof window !== 'undefined') {
+    return localStorage.getItem('revelation_token');
+  }
+  return null;
+};
+
+const initialToken = getStoredToken();
+
 const initialState: AuthState = {
-  token: null,
+  token: initialToken,
   user: null,
-  isAuthenticated: false,
+  isAuthenticated: !!initialToken,
 };
 
 export const authSlice = createSlice({
@@ -31,7 +39,12 @@ export const authSlice = createSlice({
       action: PayloadAction<{ user: User; accessToken?: string | null }>
     ) => {
       state.user = action.payload.user;
-      state.token = action.payload.accessToken || null;
+      if (action.payload.accessToken) {
+        state.token = action.payload.accessToken;
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('revelation_token', action.payload.accessToken);
+        }
+      }
       state.isAuthenticated = true;
     },
     setUser: (state, action: PayloadAction<User>) => {
@@ -42,6 +55,9 @@ export const authSlice = createSlice({
       state.user = null;
       state.token = null;
       state.isAuthenticated = false;
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('revelation_token');
+      }
     },
   },
 });
