@@ -25,9 +25,13 @@ export const adminApi = baseApi.injectEndpoints({
       query: () => '/auth/admin/list',
       providesTags: ['Admin'],
       transformResponse: (response: any) => {
-        if (Array.isArray(response)) return response;
-        if (Array.isArray(response?.admins)) return response.admins;
+        // Handle double-nested: { data: { users/admins: [...] } }
+        if (Array.isArray(response?.data?.users)) return response.data.users;
+        if (Array.isArray(response?.data?.admins)) return response.data.admins;
         if (Array.isArray(response?.data)) return response.data;
+        if (Array.isArray(response?.users)) return response.users;
+        if (Array.isArray(response?.admins)) return response.admins;
+        if (Array.isArray(response)) return response;
         return [];
       },
     }),
@@ -35,9 +39,13 @@ export const adminApi = baseApi.injectEndpoints({
       query: () => '/auth/users',
       providesTags: ['Admin'],
       transformResponse: (response: any) => {
-        if (Array.isArray(response)) return response;
-        if (Array.isArray(response?.users)) return response.users;
+        // Handle double-nested: { data: { users: [...] } }
+        if (Array.isArray(response?.data?.users)) return response.data.users;
+        if (Array.isArray(response?.data?.admins)) return response.data.admins;
         if (Array.isArray(response?.data)) return response.data;
+        if (Array.isArray(response?.users)) return response.users;
+        if (Array.isArray(response?.admins)) return response.admins;
+        if (Array.isArray(response)) return response;
         return [];
       },
     }),

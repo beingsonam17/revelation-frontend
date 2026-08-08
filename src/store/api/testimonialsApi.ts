@@ -38,12 +38,20 @@ export const testimonialsApi = baseApi.injectEndpoints({
     getApprovedTestimonials: builder.query<Testimonial[], void>({
       query: () => '/testimonials',
       providesTags: ['Testimonial'],
-      transformResponse: (response: any) => response.data || response,
+      transformResponse: (response: any) => {
+        if (Array.isArray(response?.data)) return response.data;
+        if (Array.isArray(response)) return response;
+        return response?.data || [];
+      },
     }),
     getAdminTestimonials: builder.query<Testimonial[], void>({
       query: () => '/testimonials/admin/all',
       providesTags: ['Testimonial'],
-      transformResponse: (response: any) => response.data || response,
+      transformResponse: (response: any) => {
+        if (Array.isArray(response?.data)) return response.data;
+        if (Array.isArray(response)) return response;
+        return response?.data || [];
+      },
     }),
     createTestimonial: builder.mutation<Testimonial, CreateTestimonialDto>({
       query: (data) => ({
@@ -70,7 +78,11 @@ export const testimonialsApi = baseApi.injectEndpoints({
     getClients: builder.query<Client[], void>({
       query: () => '/clients',
       providesTags: ['Client'],
-      transformResponse: (response: any) => response.data || response,
+      transformResponse: (response: any) => {
+        if (Array.isArray(response?.data)) return response.data;
+        if (Array.isArray(response)) return response;
+        return response?.data || [];
+      },
     }),
   }),
 });
