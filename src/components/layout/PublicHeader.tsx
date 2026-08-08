@@ -3,15 +3,29 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useAppSelector } from '@/store';
+import { useAppSelector, useAppDispatch } from '@/store';
 import { useGetSiteSettingsQuery } from '@/store/api/siteSettingsApi';
-import { ShieldCheck, Phone, Menu, X, Calendar, User as UserIcon } from 'lucide-react';
+import { useLogoutApiMutation } from '@/store/api/authApi';
+import { logout } from '@/store/slices/authSlice';
+import { useRouter } from 'next/navigation';
+import { ShieldCheck, Phone, Menu, X, Calendar, User as UserIcon, LogOut } from 'lucide-react';
 
 export const PublicHeader: React.FC = () => {
   const pathname = usePathname();
+  const router = useRouter();
+  const dispatch = useAppDispatch();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { data: settings } = useGetSiteSettingsQuery();
+  const [logoutApi] = useLogoutApiMutation();
+
+  const handlePublicLogout = async () => {
+    try {
+      await logoutApi(undefined).unwrap();
+    } catch (e) {}
+    dispatch(logout());
+    router.push('/');
+  };
 
   const siteName = settings?.siteName || 'Revelation Pest Control';
   const announcementText = settings?.announcementText || 'Emergency Pest Control Service Available 24/7 in Kathmandu Valley';
@@ -81,13 +95,22 @@ export const PublicHeader: React.FC = () => {
         {/* CTA & User Status */}
         <div className="hidden md:flex items-center gap-4">
           {isAuthenticated ? (
-            <Link
-              href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard'}
-              className="inline-flex items-center gap-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-4 py-2 rounded-xl transition"
-            >
-              <UserIcon className="w-4 h-4" />
-              <span>{user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? 'Admin Panel' : 'Dashboard'}</span>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard'}
+                className="inline-flex items-center gap-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 px-4 py-2 rounded-xl transition"
+              >
+                <UserIcon className="w-4 h-4" />
+                <span>{user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? 'Admin Panel' : 'Dashboard'}</span>
+              </Link>
+              <button
+                onClick={handlePublicLogout}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 px-3 py-2 rounded-xl border border-slate-700 transition"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                <span>Sign Out</span>
+              </button>
+            </div>
           ) : (
             <Link
               href="/login"
@@ -130,14 +153,26 @@ export const PublicHeader: React.FC = () => {
           ))}
           <div className="pt-3 border-t border-slate-800 space-y-2">
             {isAuthenticated ? (
-              <Link
-                href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard'}
-                onClick={() => setMobileMenuOpen(false)}
-                className="w-full text-center flex items-center justify-center gap-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 py-2.5 rounded-xl transition"
-              >
-                <UserIcon className="w-4 h-4" />
-                <span>{user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? 'Admin Panel' : 'Dashboard'}</span>
-              </Link>
+              <div className="space-y-2">
+                <Link
+                  href={user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard'}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full text-center flex items-center justify-center gap-2 text-xs font-bold bg-slate-800 hover:bg-slate-700 text-amber-400 border border-slate-700 py-2.5 rounded-xl transition"
+                >
+                  <UserIcon className="w-4 h-4" />
+                  <span>{user?.role === 'ADMIN' || user?.role === 'SUPER_ADMIN' ? 'Admin Panel' : 'Dashboard'}</span>
+                </Link>
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handlePublicLogout();
+                  }}
+                  className="w-full text-center flex items-center justify-center gap-2 text-xs font-bold text-slate-300 bg-slate-800/80 border border-slate-700/80 py-2 rounded-xl transition"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  <span>Sign Out</span>
+                </button>
+              </div>
             ) : (
               <Link
                 href="/login"
