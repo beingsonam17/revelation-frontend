@@ -207,7 +207,7 @@ export function BlogsTab() {
 
       {/* Fullscreen Editor Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md overflow-y-auto p-4 sm:p-6">
+        <div className="fixed inset-0 z-[999] bg-slate-950/95 backdrop-blur-xl overflow-y-auto p-4 sm:p-6 my-0">
           <div className="max-w-5xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative">
             <button
               onClick={() => setShowModal(false)}

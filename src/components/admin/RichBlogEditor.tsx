@@ -305,7 +305,7 @@ export function RichBlogEditor({ value, onChange }: RichBlogEditorProps) {
 
       {/* Modal: Insert Image */}
       {showImageModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[1000] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-5 shadow-2xl relative">
             <button
               onClick={() => setShowImageModal(false)}
