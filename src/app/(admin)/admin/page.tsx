@@ -10,6 +10,7 @@ import { BookingsTab } from '@/components/admin/BookingsTab';
 import { InquiriesTab } from '@/components/admin/InquiriesTab';
 import { ReviewsTab } from '@/components/admin/ReviewsTab';
 import { AdminTeamTab } from '@/components/admin/AdminTeamTab';
+import { useAppSelector } from '@/store';
 
 import {
   LayoutDashboard,
