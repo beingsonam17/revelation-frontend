@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   useGetServicesQuery,
   useCreateServiceAdminMutation,
@@ -29,6 +30,9 @@ export function ServicesTab() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingService, setEditingService] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -175,9 +179,9 @@ export function ServicesTab() {
         ))}
       </div>
 
-      {/* Modal: Create / Edit Service */}
-      {showModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+      {/* Modal: Create / Edit Service — portal renders outside sidebar stacking context */}
+      {showModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-2xl p-6 space-y-5 shadow-2xl relative">
             <button onClick={() => setShowModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
               <X className="w-5 h-5" />
@@ -230,7 +234,7 @@ export function ServicesTab() {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 }

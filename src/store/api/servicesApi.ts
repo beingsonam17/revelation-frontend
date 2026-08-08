@@ -22,7 +22,7 @@ export const servicesApi = baseApi.injectEndpoints({
       invalidatesTags: ['Services'],
     }),
     updateServiceAdmin: builder.mutation({
-      query: ({ id, ...data }: { id: string; [key: string]: any }) => ({
+      query: ({ id, data }: { id: string; data: any }) => ({
         url: `/services/${id}`,
         method: 'PATCH',
         data,
