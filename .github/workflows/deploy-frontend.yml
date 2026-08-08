@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  packages: write
 
 concurrency:
   group: deploy-prod-frontend
@@ -43,20 +42,17 @@ jobs:
             exit 1
           fi
 
-      - name: Build and Push Docker Image
+      - name: Build local Docker image on VPS
         run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           API_URL="${NEXT_PUBLIC_API_URL:-https://api.revelationpestcontrol.com/api/v1}"
           docker build --build-arg NEXT_PUBLIC_API_URL="$API_URL" -t ghcr.io/${{ github.repository_owner }}/revelation-frontend:${{ github.sha }} -t ghcr.io/${{ github.repository_owner }}/revelation-frontend:prod .
-          docker push ghcr.io/${{ github.repository_owner }}/revelation-frontend:${{ github.sha }}
-          docker push ghcr.io/${{ github.repository_owner }}/revelation-frontend:prod
 
       - name: Prepare deployment directory
         run: |
           mkdir -p "$DEPLOY_DIR"
           install -m 644 docker-compose.yml "$DEPLOY_DIR/docker-compose.yml"
 
-      - name: Pull and start containers
+      - name: Start containers
         env:
           IMAGE_TAG_BACKEND: prod
           IMAGE_TAG_FRONTEND: ${{ github.sha }}
@@ -73,9 +69,6 @@ jobs:
             DOCKER_COMPOSE="docker-compose"
           fi
           
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-          $DOCKER_COMPOSE config
-          $DOCKER_COMPOSE --env-file .env.production pull revelation-frontend
           $DOCKER_COMPOSE --env-file .env.production up -d revelation-frontend
 
       - name: Show running services
