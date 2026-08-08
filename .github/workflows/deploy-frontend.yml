@@ -52,23 +52,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build and push frontend image
-        run: |
-          API_URL="${{ env.NEXT_PUBLIC_API_URL }}"
-          if [ -z "$API_URL" ]; then
-            API_URL="https://api.revelationpestcontrol.com/api/v1"
-          fi
-          SITE_URL="${{ env.NEXT_PUBLIC_SITE_URL }}"
-          if [ -z "$SITE_URL" ]; then
-            SITE_URL="https://revelationpestcontrol.com"
-          fi
-          docker build \
-            --build-arg NEXT_PUBLIC_API_URL="$API_URL" \
-            --build-arg NEXT_PUBLIC_SITE_URL="$SITE_URL" \
-            -t ${{ env.IMAGE_NAME_FRONTEND }}:${{ github.sha }} \
-            -t ${{ env.IMAGE_NAME_FRONTEND }}:prod .
-          docker push ${{ env.IMAGE_NAME_FRONTEND }}:${{ github.sha }}
-          docker push ${{ env.IMAGE_NAME_FRONTEND }}:prod
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          build-args: |
+            NEXT_PUBLIC_API_URL=${{ env.NEXT_PUBLIC_API_URL || 'https://api.revelationpestcontrol.com/api/v1' }}
+            NEXT_PUBLIC_SITE_URL=${{ env.NEXT_PUBLIC_SITE_URL || 'https://revelationpestcontrol.com' }}
+          tags: |
+            ${{ env.IMAGE_NAME_FRONTEND }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME_FRONTEND }}:prod
 
       - name: Prepare deployment directory
         run: |
@@ -92,7 +90,6 @@ jobs:
             DOCKER_COMPOSE="docker-compose"
           fi
           
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           $DOCKER_COMPOSE config
           $DOCKER_COMPOSE pull revelation-frontend
           $DOCKER_COMPOSE up -d revelation-frontend
