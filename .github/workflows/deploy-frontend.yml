@@ -18,8 +18,6 @@ concurrency:
 env:
   IMAGE_NAME_FRONTEND: ghcr.io/${{ github.repository_owner }}/revelation-frontend
   DEPLOY_DIR: /home/beingonam/revelationpestcontrol
-  NEXT_PUBLIC_API_URL: ""
-  NEXT_PUBLIC_SITE_URL: ""
 
 jobs:
   deploy:
@@ -45,35 +43,20 @@ jobs:
             exit 1
           fi
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build and push frontend image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          build-args: |
-            NEXT_PUBLIC_API_URL=${{ env.NEXT_PUBLIC_API_URL || 'https://api.revelationpestcontrol.com/api/v1' }}
-            NEXT_PUBLIC_SITE_URL=${{ env.NEXT_PUBLIC_SITE_URL || 'https://revelationpestcontrol.com' }}
-          tags: |
-            ${{ env.IMAGE_NAME_FRONTEND }}:${{ github.sha }}
-            ${{ env.IMAGE_NAME_FRONTEND }}:prod
+      - name: Build and Push Docker Image
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+          API_URL="${NEXT_PUBLIC_API_URL:-https://api.revelationpestcontrol.com/api/v1}"
+          docker build --build-arg NEXT_PUBLIC_API_URL="$API_URL" -t ghcr.io/${{ github.repository_owner }}/revelation-frontend:${{ github.sha }} -t ghcr.io/${{ github.repository_owner }}/revelation-frontend:prod .
+          docker push ghcr.io/${{ github.repository_owner }}/revelation-frontend:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/revelation-frontend:prod
 
       - name: Prepare deployment directory
         run: |
           mkdir -p "$DEPLOY_DIR"
           install -m 644 docker-compose.yml "$DEPLOY_DIR/docker-compose.yml"
 
-      - name: Pull and start frontend container
+      - name: Pull and start containers
         env:
           IMAGE_TAG_BACKEND: prod
           IMAGE_TAG_FRONTEND: ${{ github.sha }}
@@ -90,9 +73,10 @@ jobs:
             DOCKER_COMPOSE="docker-compose"
           fi
           
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
           $DOCKER_COMPOSE config
-          $DOCKER_COMPOSE pull revelation-frontend
-          $DOCKER_COMPOSE up -d revelation-frontend
+          $DOCKER_COMPOSE --env-file .env.production pull revelation-frontend
+          $DOCKER_COMPOSE --env-file .env.production up -d revelation-frontend
 
       - name: Show running services
         env:
@@ -111,4 +95,4 @@ jobs:
             DOCKER_COMPOSE="docker-compose"
           fi
           
-          $DOCKER_COMPOSE ps
+          $DOCKER_COMPOSE --env-file .env.production ps
