@@ -45,7 +45,7 @@ export const siteSettingsApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: '/site-settings',
         method: 'PATCH',
-        body: data,
+        data,
       }),
       invalidatesTags: ['SiteSettings'],
     }),
@@ -53,7 +53,7 @@ export const siteSettingsApi = baseApi.injectEndpoints({
       query: (formData) => ({
         url: '/site-settings/upload-logo',
         method: 'POST',
-        body: formData,
+        data: formData,
       }),
     }),
   }),

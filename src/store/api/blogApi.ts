@@ -41,7 +41,7 @@ export const blogApi = baseApi.injectEndpoints({
       query: (data) => ({
         url: '/blog',
         method: 'POST',
-        body: data,
+        data,
       }),
       invalidatesTags: ['Blog'],
     }),
@@ -49,7 +49,7 @@ export const blogApi = baseApi.injectEndpoints({
       query: ({ id, data }) => ({
         url: `/blog/${id}`,
         method: 'PATCH',
-        body: data,
+        data,
       }),
       invalidatesTags: ['Blog'],
     }),
@@ -64,7 +64,7 @@ export const blogApi = baseApi.injectEndpoints({
       query: (formData) => ({
         url: '/blog/upload-image',
         method: 'POST',
-        body: formData,
+        data: formData,
       }),
     }),
   }),

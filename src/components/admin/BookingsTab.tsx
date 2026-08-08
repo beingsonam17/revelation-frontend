@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import {
   useGetAllBookingsAdminQuery,
   useUpdateBookingStatusAdminMutation,
@@ -29,14 +30,14 @@ export function BookingsTab() {
   const [createBooking, { isLoading: isCreating }] = useCreateBookingMutation();
 
   const [showManualModal, setShowManualModal] = useState(false);
+  const [manualBookingError, setManualBookingError] = useState<string | null>(null);
   const [manualForm, setManualForm] = useState({
-    name: '',
-    phone: '',
-    email: '',
+    customerName: '',
+    customerPhone: '',
+    customerEmail: '',
     address: '',
-    serviceName: 'Cockroach Control',
     preferredDate: '',
-    preferredTime: '10:00 AM',
+    preferredTimeSlot: 'Morning (9:00 AM - 12:00 PM)',
     notes: 'Phone call booking',
   });
 
@@ -57,19 +58,20 @@ export function BookingsTab() {
     try {
       await updateStatus({ id, status: newStatus }).unwrap();
       refetch();
-    } catch (err) {
-      alert('Failed to update status.');
+    } catch (err: any) {
+      // Silently fail — status badge will revert on next refetch
     }
   };
 
   const handleCreateManualBooking = async (e: React.FormEvent) => {
     e.preventDefault();
+    setManualBookingError(null);
     try {
       await createBooking(manualForm).unwrap();
       setShowManualModal(false);
       refetch();
-    } catch (err) {
-      alert('Failed to create manual booking.');
+    } catch (err: any) {
+      setManualBookingError(err?.data || 'Failed to create booking. Please check the details and try again.');
     }
   };
 
@@ -187,56 +189,110 @@ export function BookingsTab() {
         </div>
       </div>
 
-      {/* Modal: Manual Booking */}
-      {showManualModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-5 shadow-2xl relative">
-            <button onClick={() => setShowManualModal(false)} className="absolute top-4 right-4 text-slate-400 hover:text-white">
+      {/* Modal: Manual Booking — portal */}
+      {showManualModal && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 space-y-5 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onClick={() => { setShowManualModal(false); setManualBookingError(null); }} className="absolute top-4 right-4 text-slate-400 hover:text-white">
               <X className="w-5 h-5" />
             </button>
-            <h3 className="text-lg font-bold text-white">Add Manual Booking</h3>
+            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+              <Plus className="w-5 h-5 text-amber-400" />
+              Add Manual Booking
+            </h3>
+
+            {manualBookingError && (
+              <div className="p-3 bg-rose-950/60 border border-rose-800/60 rounded-xl text-rose-400 text-xs">
+                {manualBookingError}
+              </div>
+            )}
 
             <form onSubmit={handleCreateManualBooking} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Customer Name</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Customer Name <span className="text-rose-400">*</span></label>
                 <input
                   type="text"
                   required
-                  value={manualForm.name}
-                  onChange={(e) => setManualForm({ ...manualForm, name: e.target.value })}
+                  value={manualForm.customerName}
+                  onChange={(e) => setManualForm({ ...manualForm, customerName: e.target.value })}
+                  placeholder="Full name"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Phone Number</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Phone Number <span className="text-rose-400">*</span></label>
                 <input
                   type="text"
                   required
-                  value={manualForm.phone}
-                  onChange={(e) => setManualForm({ ...manualForm, phone: e.target.value })}
+                  value={manualForm.customerPhone}
+                  onChange={(e) => setManualForm({ ...manualForm, customerPhone: e.target.value })}
+                  placeholder="+977 98XXXXXXXX"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-semibold text-slate-300 mb-1">Address</label>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+                <input
+                  type="email"
+                  value={manualForm.customerEmail}
+                  onChange={(e) => setManualForm({ ...manualForm, customerEmail: e.target.value })}
+                  placeholder="customer@email.com"
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Address <span className="text-rose-400">*</span></label>
                 <input
                   type="text"
                   required
                   value={manualForm.address}
                   onChange={(e) => setManualForm({ ...manualForm, address: e.target.value })}
+                  placeholder="Kathmandu, Baneshwor"
                   className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
-              <div className="flex justify-end gap-3 pt-3">
-                <button type="button" onClick={() => setShowManualModal(false)} className="px-4 py-2 text-sm text-slate-400 hover:text-white">Cancel</button>
-                <button type="submit" disabled={isCreating} className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition">
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Preferred Date <span className="text-rose-400">*</span></label>
+                <input
+                  type="date"
+                  required
+                  value={manualForm.preferredDate}
+                  onChange={(e) => setManualForm({ ...manualForm, preferredDate: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Preferred Time Slot</label>
+                <select
+                  value={manualForm.preferredTimeSlot}
+                  onChange={(e) => setManualForm({ ...manualForm, preferredTimeSlot: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                >
+                  <option>Morning (9:00 AM - 12:00 PM)</option>
+                  <option>Afternoon (12:00 PM - 3:00 PM)</option>
+                  <option>Evening (3:00 PM - 6:00 PM)</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Notes</label>
+                <textarea
+                  rows={2}
+                  value={manualForm.notes}
+                  onChange={(e) => setManualForm({ ...manualForm, notes: e.target.value })}
+                  className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
+                <button type="button" onClick={() => { setShowManualModal(false); setManualBookingError(null); }} className="px-4 py-2 text-sm text-slate-400 hover:text-white">Cancel</button>
+                <button type="submit" disabled={isCreating} className="px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm transition flex items-center gap-2">
+                  {isCreating && <span className="w-3 h-3 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" />}
                   Create Booking
                 </button>
               </div>
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 }
