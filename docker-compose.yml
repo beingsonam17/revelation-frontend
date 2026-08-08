@@ -1,21 +1,4 @@
 services:
-  revelation-backend:
-    image: ghcr.io/${REPOSITORY_OWNER:-deeyosoft-solutions}/revelation-backend:${IMAGE_TAG_BACKEND:-prod}
-    ports:
-      - "3004:3004"
-    env_file:
-      - .env.production
-    environment:
-      PORT: 3004
-      DB_HOST: revelation-db
-      DB_PORT: 5432
-    restart: unless-stopped
-    depends_on:
-      revelation-db:
-        condition: service_healthy
-    networks:
-      - revelation-network
-
   revelation-frontend:
     image: ghcr.io/${REPOSITORY_OWNER:-deeyosoft-solutions}/revelation-frontend:${IMAGE_TAG_FRONTEND:-prod}
     ports:
@@ -27,30 +10,6 @@ services:
     networks:
       - revelation-network
 
-  revelation-db:
-    image: postgres:16-alpine
-    container_name: revelation-db
-    ports:
-      - "5433:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: revelation_pest_db
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d revelation_pest_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    restart: unless-stopped
-    networks:
-      - revelation-network
-
 networks:
   revelation-network:
     driver: bridge
-
-volumes:
-  postgres_data:

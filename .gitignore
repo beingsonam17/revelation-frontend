@@ -49,3 +49,6 @@ Desktop.ini
 *.sublime-project
 *.swp
 *.swo
+
+# Deployment Checklist
+DEPLOYMENT_CHECKLIST.md
