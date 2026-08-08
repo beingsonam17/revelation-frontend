@@ -26,6 +26,7 @@ export const adminApi = baseApi.injectEndpoints({
       providesTags: ['Admin'],
       transformResponse: (response: any) => {
         if (Array.isArray(response)) return response;
+        if (Array.isArray(response?.admins)) return response.admins;
         if (Array.isArray(response?.data)) return response.data;
         return [];
       },
