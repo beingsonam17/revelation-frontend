@@ -9,6 +9,7 @@ import { ServicesTab } from '@/components/admin/ServicesTab';
 import { BookingsTab } from '@/components/admin/BookingsTab';
 import { InquiriesTab } from '@/components/admin/InquiriesTab';
 import { ReviewsTab } from '@/components/admin/ReviewsTab';
+import { AdminTeamTab } from '@/components/admin/AdminTeamTab';
 
 import {
   LayoutDashboard,
@@ -26,10 +27,11 @@ import {
   X,
   ChevronRight,
   ShieldCheck,
+  Crown,
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'blogs' | 'services' | 'bookings' | 'inquiries' | 'reviews'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'blogs' | 'services' | 'bookings' | 'inquiries' | 'reviews' | 'team'>('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { data: statsData, refetch: refetchStats } = useGetAdminStatsQuery(undefined);
@@ -44,6 +46,9 @@ export default function AdminDashboardPage() {
     totalCustomers: 0,
   };
 
+  const { user } = useAppSelector((state) => state.auth);
+  const isSuperAdmin = user?.role === 'SUPER_ADMIN';
+
   const navItems = [
     { id: 'overview', label: 'Overview Metrics', icon: LayoutDashboard },
     { id: 'settings', label: 'Site Settings & Logo', icon: Building2 },
@@ -52,6 +57,7 @@ export default function AdminDashboardPage() {
     { id: 'bookings', label: 'Bookings & Calendar', icon: Calendar },
     { id: 'inquiries', label: 'Inquiries Inbox', icon: Inbox },
     { id: 'reviews', label: 'Customer Reviews', icon: Quote },
+    ...(isSuperAdmin ? [{ id: 'team', label: 'Admin Team', icon: Crown }] : []),
   ];
 
   return (
@@ -220,6 +226,9 @@ export default function AdminDashboardPage() {
 
           {/* REVIEWS TAB */}
           {activeTab === 'reviews' && <ReviewsTab />}
+
+          {/* ADMIN TEAM TAB */}
+          {activeTab === 'team' && <AdminTeamTab />}
         </main>
       </div>
     </div>

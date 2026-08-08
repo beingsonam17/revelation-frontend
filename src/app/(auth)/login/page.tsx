@@ -58,9 +58,7 @@ export default function LoginPage() {
             try {
               const res: any = await login(values).unwrap();
               dispatch(setCredentials({ user: res.data.user, accessToken: res.data.accessToken }));
-              if (res.data.user.role === 'SUPER_ADMIN') {
-                router.push('/superadmin');
-              } else if (res.data.user.role === 'ADMIN') {
+              if (res.data.user.role === 'SUPER_ADMIN' || res.data.user.role === 'ADMIN') {
                 router.push('/admin');
               } else {
                 router.push('/dashboard');
