@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - dev
   workflow_dispatch:
 
 permissions:
@@ -28,16 +29,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Load Frontend Env Vars
+      - name: Load Frontend Env Vars from VPS
         run: |
-          ENV_FILE=""
-          if [ -f "/home/envs/revelationpestcontrol/.env.frontend.production" ]; then
-            ENV_FILE="/home/envs/revelationpestcontrol/.env.frontend.production"
-          elif [ -f "./.env.production" ]; then
-            ENV_FILE="./.env.production"
-          fi
-
-          if [ -n "$ENV_FILE" ]; then
+          ENV_FILE="/home/envs/revelation/.env.production"
+          if [ -f "$ENV_FILE" ]; then
             while IFS= read -r line || [ -n "$line" ]; do
               if [[ ! "$line" =~ ^# ]] && [[ "$line" =~ = ]]; then
                 key=$(echo "$line" | cut -d= -f1 | tr -d ' ')
@@ -46,7 +41,7 @@ jobs:
               fi
             done < "$ENV_FILE"
           else
-            echo "Missing frontend environment file"
+            echo "Missing /home/envs/revelation/.env.production"
             exit 1
           fi
 
