@@ -1,0 +1,11 @@
+services:
+  revelation-frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3003:3003"
+    environment:
+      PORT: 3003
+      NEXT_PUBLIC_API_URL: http://localhost:3004/api/v1
+    restart: unless-stopped
