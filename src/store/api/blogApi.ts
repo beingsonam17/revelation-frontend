@@ -33,6 +33,10 @@ export const blogApi = baseApi.injectEndpoints({
       query: () => '/blog',
       providesTags: ['Blog'],
     }),
+    getAdminBlogPosts: builder.query<BlogPost[], void>({
+      query: () => '/blog/admin/all',
+      providesTags: ['Blog'],
+    }),
     getBlogPostBySlug: builder.query<BlogPost, string>({
       query: (slug) => `/blog/${slug}`,
       providesTags: (result, error, slug) => [{ type: 'Blog', id: slug }],
@@ -72,6 +76,7 @@ export const blogApi = baseApi.injectEndpoints({
 
 export const {
   useGetBlogPostsQuery,
+  useGetAdminBlogPostsQuery,
   useGetBlogPostBySlugQuery,
   useCreateBlogPostMutation,
   useUpdateBlogPostMutation,

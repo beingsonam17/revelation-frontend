@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  useGetBlogPostsQuery,
+  useGetAdminBlogPostsQuery,
   useCreateBlogPostMutation,
   useUpdateBlogPostMutation,
   useDeleteBlogPostMutation,
@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 
 export function BlogsTab() {
-  const { data: blogPosts = [], isLoading, refetch } = useGetBlogPostsQuery();
+  const { data: blogPosts = [], isLoading, refetch } = useGetAdminBlogPostsQuery();
   const [createPost, { isLoading: isCreating }] = useCreateBlogPostMutation();
   const [updatePost, { isLoading: isUpdating }] = useUpdateBlogPostMutation();
   const [deletePost, { isLoading: isDeleting }] = useDeleteBlogPostMutation();

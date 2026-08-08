@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useGetAdminStatsQuery } from '@/store/api/dashboardApi';
+import { useGetMeQuery } from '@/store/api/authApi';
 import { DashboardHeader } from '@/components/layout/DashboardHeader';
 import { SiteSettingsTab } from '@/components/admin/SiteSettingsTab';
 import { BlogsTab } from '@/components/admin/BlogsTab';
@@ -31,9 +32,10 @@ import {
   ChevronRight,
   ShieldCheck,
   Crown,
+  Loader2,
 } from 'lucide-react';
 
-export default function AdminDashboardPage() {
+function AdminDashboardInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const activeTab = (searchParams.get('tab') || 'overview') as
@@ -45,6 +47,20 @@ export default function AdminDashboardPage() {
   const setActiveTab = (tab: string) => {
     router.push(`/admin?tab=${tab}`);
   };
+
+  const { isFetching: isAuthLoading } = useGetMeQuery(undefined);
+
+  // Show loading spinner while session is being restored
+  if (isAuthLoading) {
+    return (
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+          <p className="text-xs font-semibold text-slate-400 tracking-wider">Restoring session...</p>
+        </div>
+      </div>
+    );
+  }
 
   const { data: statsData, refetch: refetchStats } = useGetAdminStatsQuery(undefined);
 
@@ -248,5 +264,17 @@ export default function AdminDashboardPage() {
         </main>
       </div>
     </div>
+  );
+}
+
+export default function AdminDashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+      </div>
+    }>
+      <AdminDashboardInner />
+    </Suspense>
   );
 }
