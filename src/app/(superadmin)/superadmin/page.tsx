@@ -77,8 +77,14 @@ export default function SuperAdminPage() {
     );
   }
 
-  const activeAdminsCount = admins.filter((a) => a.isActive).length;
-  const inactiveAdminsCount = admins.filter((a) => !a.isActive).length;
+  const adminList: AdminUser[] = Array.isArray(admins)
+    ? admins
+    : (admins as any)?.data && Array.isArray((admins as any).data)
+    ? (admins as any).data
+    : [];
+
+  const activeAdminsCount = adminList.filter((a) => a.isActive).length;
+  const inactiveAdminsCount = adminList.filter((a) => !a.isActive).length;
 
   const handleToggleActive = async (admin: AdminUser) => {
     try {
@@ -203,7 +209,7 @@ export default function SuperAdminPage() {
               <AlertCircle className="w-8 h-8 mx-auto" />
               <p className="text-sm font-semibold">Failed to load administrators.</p>
             </div>
-          ) : admins.length === 0 ? (
+          ) : adminList.length === 0 ? (
             <div className="py-16 text-center text-slate-400 space-y-3">
               <UserX className="w-10 h-10 text-slate-600 mx-auto" />
               <p className="text-base font-semibold text-slate-300">No Admin accounts found</p>
@@ -224,7 +230,7 @@ export default function SuperAdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60">
-                  {admins.map((admin) => (
+                  {adminList.map((admin) => (
                     <tr key={admin.id} className="hover:bg-slate-800/30 transition">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
