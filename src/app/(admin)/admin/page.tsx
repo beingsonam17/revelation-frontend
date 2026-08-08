@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useGetAdminStatsQuery } from '@/store/api/dashboardApi';
 import { DashboardHeader } from '@/components/layout/DashboardHeader';
 import { SiteSettingsTab } from '@/components/admin/SiteSettingsTab';
@@ -33,8 +34,17 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'settings' | 'blogs' | 'services' | 'bookings' | 'inquiries' | 'reviews' | 'team'>('overview');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const activeTab = (searchParams.get('tab') || 'overview') as
+    | 'overview' | 'users' | 'settings' | 'blogs'
+    | 'services' | 'bookings' | 'inquiries' | 'reviews' | 'team';
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const setActiveTab = (tab: string) => {
+    router.push(`/admin?tab=${tab}`);
+  };
 
   const { data: statsData, refetch: refetchStats } = useGetAdminStatsQuery(undefined);
 
@@ -100,7 +110,7 @@ export default function AdminDashboardPage() {
                 <button
                   key={item.id}
                   onClick={() => {
-                    setActiveTab(item.id as any);
+                    setActiveTab(item.id);
                     setMobileMenuOpen(false);
                   }}
                   className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl font-semibold text-xs sm:text-sm transition-all ${
