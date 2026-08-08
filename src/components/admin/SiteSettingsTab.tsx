@@ -349,6 +349,34 @@ export function SiteSettingsTab() {
               className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs font-mono text-slate-200 focus:outline-none focus:border-amber-500"
             />
           </div>
+
+          <div className="pt-4 border-t border-slate-800 space-y-4">
+            <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">Analytics & Custom Tracking Scripts</h4>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Google Analytics Measurement ID (e.g. G-QWLSRQMK66)</label>
+              <input
+                type="text"
+                name="googleAnalyticsId"
+                value={formData.googleAnalyticsId || ''}
+                onChange={handleChange}
+                placeholder="G-QWLSRQMK66"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-slate-300 mb-1">Custom Header HTML Scripts (GTM / Meta Pixel / Custom Code)</label>
+              <textarea
+                name="customHeaderScripts"
+                rows={5}
+                value={formData.customHeaderScripts || ''}
+                onChange={handleChange}
+                placeholder="<!-- Paste your Google Tag Manager or tracking script here -->"
+                className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs font-mono text-amber-300 focus:outline-none focus:border-amber-500"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </form>

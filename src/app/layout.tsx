@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import StoreProvider from '@/store/provider';
+import { DynamicAnalyticsScript } from '@/components/seo/DynamicAnalyticsScript';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -34,6 +35,7 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <StoreProvider>
+          <DynamicAnalyticsScript />
           {children}
         </StoreProvider>
       </body>

@@ -31,6 +31,8 @@ export interface SiteSettings {
   metaKeywords: string;
   privacyPolicy?: string;
   termsOfService?: string;
+  googleAnalyticsId?: string;
+  customHeaderScripts?: string;
 }
 
 export const siteSettingsApi = baseApi.injectEndpoints({
