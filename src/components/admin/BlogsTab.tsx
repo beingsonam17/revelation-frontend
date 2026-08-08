@@ -6,6 +6,7 @@ import {
   useCreateBlogPostMutation,
   useUpdateBlogPostMutation,
   useDeleteBlogPostMutation,
+  useUploadBlogImageMutation,
 } from '@/store/api/blogApi';
 import { RichBlogEditor } from './RichBlogEditor';
 import {
@@ -19,6 +20,7 @@ import {
   Search,
   Globe,
   Sparkles,
+  Upload,
 } from 'lucide-react';
 
 export function BlogsTab() {
@@ -26,6 +28,7 @@ export function BlogsTab() {
   const [createPost, { isLoading: isCreating }] = useCreateBlogPostMutation();
   const [updatePost, { isLoading: isUpdating }] = useUpdateBlogPostMutation();
   const [deletePost, { isLoading: isDeleting }] = useDeleteBlogPostMutation();
+  const [uploadBlogImage, { isLoading: isUploadingCover }] = useUploadBlogImageMutation();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -41,6 +44,22 @@ export function BlogsTab() {
     keywords: '',
     isPublished: true,
   });
+
+  const handleCoverUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await uploadBlogImage(fd).unwrap();
+      if (res.url) {
+        setFormData((prev) => ({ ...prev, coverImage: res.url }));
+      }
+    } catch (err) {
+      alert('Failed to upload cover image.');
+    }
+  };
 
   const filteredPosts = blogPosts.filter(
     (post: any) =>
@@ -241,14 +260,30 @@ export function BlogsTab() {
               {/* Cover Image & SEO */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cover Image URL</label>
-                  <input
-                    type="text"
-                    value={formData.coverImage}
-                    onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
-                    placeholder="/uploads/blogs/cover.jpg or URL"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
-                  />
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Cover Image</label>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      {formData.coverImage ? (
+                        <img src={formData.coverImage} alt="Cover Preview" className="w-16 h-12 object-cover rounded-xl border border-slate-800" />
+                      ) : (
+                        <div className="w-16 h-12 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center text-[10px] text-slate-600">No Image</div>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleCoverUpload}
+                        className="text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-amber-500/10 file:text-amber-400 hover:file:bg-amber-500/20 cursor-pointer"
+                      />
+                    </div>
+                    {isUploadingCover && <p className="text-xs text-amber-400 animate-pulse">Uploading cover image...</p>}
+                    <input
+                      type="text"
+                      value={formData.coverImage}
+                      onChange={(e) => setFormData({ ...formData, coverImage: e.target.value })}
+                      placeholder="Or enter image URL / upload path..."
+                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:border-amber-500"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">SEO Meta Title</label>
