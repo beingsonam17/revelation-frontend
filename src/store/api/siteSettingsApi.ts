@@ -29,6 +29,8 @@ export interface SiteSettings {
   metaTitle: string;
   metaDescription: string;
   metaKeywords: string;
+  privacyPolicy?: string;
+  termsOfService?: string;
 }
 
 export const siteSettingsApi = baseApi.injectEndpoints({

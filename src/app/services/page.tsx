@@ -81,7 +81,7 @@ export default function ServicesPage() {
       <section className="py-20 bg-slate-900 border-b border-slate-800 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto space-y-4">
           <span className="text-xs font-extrabold uppercase tracking-wider text-amber-500">Service Catalog</span>
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white">Our Pest Control Solutions</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">Our Pest Control Solutions</h1>
           <p className="text-slate-400 text-sm md:text-base max-w-2xl mx-auto">
             Providing 24/7 safe, effective, and eco-friendly pest elimination across Kathmandu Valley for over 8 years.
           </p>

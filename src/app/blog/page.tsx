@@ -41,7 +41,7 @@ export default function BlogIndexPage() {
       <section className="py-20 bg-slate-900 border-b border-slate-800 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto space-y-3">
           <span className="text-xs font-extrabold uppercase tracking-wider text-amber-500">Pest Prevention Insights</span>
-          <h1 className="text-4xl sm:text-5xl font-extrabold text-white">Knowledge Center & Blog</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">Knowledge Center & Blog</h1>
           <p className="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
             Articles and expert guidance to protect your family and property from pests.
           </p>

@@ -29,7 +29,7 @@ export default function ContactPage() {
       <section className="py-16 bg-slate-900 border-b border-slate-800 px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto space-y-3">
           <span className="text-xs font-extrabold uppercase tracking-wider text-amber-500">Get In Touch</span>
-          <h1 className="text-3xl sm:text-5xl font-extrabold text-white">Contact Our Expert Team</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">Contact Our Expert Team</h1>
           <p className="text-slate-400 text-xs sm:text-sm max-w-xl mx-auto">
             Have a question or need emergency pest control dispatch in Kathmandu Valley? We are available 24/7.
           </p>
