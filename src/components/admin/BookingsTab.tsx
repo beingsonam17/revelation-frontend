@@ -40,7 +40,11 @@ export function BookingsTab() {
     notes: 'Phone call booking',
   });
 
-  const bookings = Array.isArray(bookingsData?.data) ? bookingsData.data : [];
+  const bookings = Array.isArray(bookingsData)
+    ? bookingsData
+    : Array.isArray((bookingsData as any)?.data)
+    ? (bookingsData as any).data
+    : [];
 
   const filteredBookings = bookings.filter(
     (b: any) =>

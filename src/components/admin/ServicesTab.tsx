@@ -40,7 +40,11 @@ export function ServicesTab() {
     isActive: true,
   });
 
-  const services = Array.isArray(servicesData?.data) ? servicesData.data : [];
+  const services = Array.isArray(servicesData)
+    ? servicesData
+    : Array.isArray((servicesData as any)?.data)
+    ? (servicesData as any).data
+    : [];
 
   const filteredServices = services.filter((s: any) =>
     s.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||

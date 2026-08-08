@@ -14,11 +14,18 @@ export function ReviewsTab() {
   const [deleteTestimonial] = useDeleteTestimonialMutation();
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredReviews = testimonials.filter(
+  const safeReviews = Array.isArray(testimonials)
+    ? testimonials
+    : Array.isArray((testimonials as any)?.data)
+    ? (testimonials as any).data
+    : [];
+
+  const filteredReviews = safeReviews.filter(
     (t: any) =>
+      t.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       t.clientName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      t.designation?.toLowerCase().includes(searchQuery.toLowerCase())
+      t.comment?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.content?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleToggle = async (id: string) => {

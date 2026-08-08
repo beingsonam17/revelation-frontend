@@ -8,7 +8,11 @@ export function InquiriesTab() {
   const { data: inquiriesData, isLoading } = useGetAllInquiriesAdminQuery(undefined);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const inquiries = Array.isArray(inquiriesData?.data) ? inquiriesData.data : [];
+  const inquiries = Array.isArray(inquiriesData)
+    ? inquiriesData
+    : Array.isArray((inquiriesData as any)?.data)
+    ? (inquiriesData as any).data
+    : [];
 
   const filteredInquiries = inquiries.filter(
     (inq: any) =>
