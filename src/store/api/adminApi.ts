@@ -22,13 +22,17 @@ export interface CreateAdminDto {
 export const adminApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAdmins: builder.query<AdminUser[], void>({
-      query: () => '/auth/admin/list',
+      query: () => '/api/v1/auth/admin/list',
       providesTags: ['Admin'],
-      transformResponse: (response: any) => response.data || response,
+      transformResponse: (response: any) => {
+        if (Array.isArray(response)) return response;
+        if (Array.isArray(response?.data)) return response.data;
+        return [];
+      },
     }),
     createAdmin: builder.mutation<AdminUser, CreateAdminDto>({
       query: (data) => ({
-        url: '/auth/admin/create',
+        url: '/api/v1/auth/admin/create',
         method: 'POST',
         data,
       }),
@@ -36,14 +40,14 @@ export const adminApi = baseApi.injectEndpoints({
     }),
     deleteAdmin: builder.mutation<{ message: string }, string>({
       query: (id) => ({
-        url: `/auth/admin/${id}`,
+        url: `/api/v1/auth/admin/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Admin'],
     }),
     toggleActiveAdmin: builder.mutation<AdminUser, string>({
       query: (id) => ({
-        url: `/auth/admin/${id}/toggle-active`,
+        url: `/api/v1/auth/admin/${id}/toggle-active`,
         method: 'PATCH',
       }),
       invalidatesTags: ['Admin'],
