@@ -25,10 +25,7 @@ export const adminApi = baseApi.injectEndpoints({
       query: () => '/auth/admin/list',
       providesTags: ['Admin'],
       transformResponse: (response: any) => {
-        // Handle double-nested: { data: { users/admins: [...] } }
-        if (Array.isArray(response?.data?.users)) return response.data.users;
-        if (Array.isArray(response?.data?.admins)) return response.data.admins;
-        if (Array.isArray(response?.data)) return response.data;
+        // baseApi unwraps { success, data } — response is now the inner payload
         if (Array.isArray(response?.users)) return response.users;
         if (Array.isArray(response?.admins)) return response.admins;
         if (Array.isArray(response)) return response;
@@ -39,10 +36,7 @@ export const adminApi = baseApi.injectEndpoints({
       query: () => '/auth/users',
       providesTags: ['Admin'],
       transformResponse: (response: any) => {
-        // Handle double-nested: { data: { users: [...] } }
-        if (Array.isArray(response?.data?.users)) return response.data.users;
-        if (Array.isArray(response?.data?.admins)) return response.data.admins;
-        if (Array.isArray(response?.data)) return response.data;
+        // baseApi unwraps { success, data } — response is now the inner payload
         if (Array.isArray(response?.users)) return response.users;
         if (Array.isArray(response?.admins)) return response.admins;
         if (Array.isArray(response)) return response;

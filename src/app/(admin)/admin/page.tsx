@@ -48,7 +48,7 @@ export default function AdminDashboardPage() {
 
   const { data: statsData, refetch: refetchStats } = useGetAdminStatsQuery(undefined);
 
-  const stats = statsData?.data?.stats || {
+  const stats = statsData?.stats || statsData?.data?.stats || {
     totalBookings: 0,
     pendingBookings: 0,
     confirmedBookings: 0,

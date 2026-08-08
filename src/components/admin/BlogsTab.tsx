@@ -67,7 +67,7 @@ export function BlogsTab() {
     }
   };
 
-  const safePosts = Array.isArray(blogPosts) ? blogPosts : (blogPosts as any)?.data || [];
+  const safePosts = Array.isArray(blogPosts) ? blogPosts : [];
   const filteredPosts = safePosts.filter(
     (post: any) =>
       post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||

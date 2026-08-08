@@ -58,7 +58,21 @@ export const axiosBaseQuery = (
         headers: requestHeaders,
       });
 
-      return { data: result.data };
+      const raw = result.data;
+
+      // Auto-unwrap the global { success, message, data: <payload> } envelope
+      // that every backend endpoint returns, so RTK Query receives the actual payload.
+      let unwrapped = raw;
+      if (
+        raw &&
+        typeof raw === 'object' &&
+        'success' in raw &&
+        'data' in raw
+      ) {
+        unwrapped = raw.data;
+      }
+
+      return { data: unwrapped };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
       const responseData = err.response?.data as any;
