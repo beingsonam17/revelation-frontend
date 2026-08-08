@@ -48,12 +48,12 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                   <Phone className="w-6 h-6" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h3 className="font-bold text-white text-base">Emergency Call (24/7)</h3>
-                  <a href="tel:+9779863847696" className="text-amber-400 font-extrabold text-lg hover:underline">
+                  <a href="tel:+9779863847696" className="text-amber-400 font-extrabold text-base sm:text-lg hover:underline break-all block">
                     +977 9863847696
                   </a>
-                  <p className="text-xs text-slate-400">Available 24 hours a day, 7 days a week</p>
+                  <p className="text-xs text-slate-400 mt-0.5">Available 24 hours a day, 7 days a week</p>
                 </div>
               </div>
 
@@ -61,10 +61,12 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                   <Mail className="w-6 h-6" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h3 className="font-bold text-white text-base">Email Support</h3>
-                  <p className="text-sm font-semibold text-slate-300">info@revelationpestcontrol.com</p>
-                  <p className="text-xs text-slate-400">Responses within 1 hour</p>
+                  <a href="mailto:info@revelationpestcontrol.com" className="text-xs sm:text-sm font-semibold text-slate-300 hover:text-amber-400 break-all block">
+                    info@revelationpestcontrol.com
+                  </a>
+                  <p className="text-xs text-slate-400 mt-0.5">Responses within 1 hour</p>
                 </div>
               </div>
 
@@ -72,10 +74,10 @@ export default function ContactPage() {
                 <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
                   <MapPin className="w-6 h-6" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <h3 className="font-bold text-white text-base">Service Region</h3>
                   <p className="text-sm font-semibold text-slate-300">Kathmandu Valley, Nepal</p>
-                  <p className="text-xs text-slate-400">Kathmandu, Lalitpur, Bhaktapur & Surrounding Districts</p>
+                  <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">Kathmandu, Lalitpur, Bhaktapur & Surrounding Districts</p>
                 </div>
               </div>
             </div>

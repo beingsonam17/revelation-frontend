@@ -80,9 +80,9 @@ export const PublicFooter: React.FC = () => {
                   {phone} (24/7 Hotline)
                 </a>
               </li>
-              <li className="flex items-center gap-2.5">
+              <li className="flex items-center gap-2.5 min-w-0">
                 <Mail className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>{email}</span>
+                <span className="break-all">{email}</span>
               </li>
             </ul>
           </div>
