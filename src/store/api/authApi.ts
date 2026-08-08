@@ -4,7 +4,7 @@ export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (credentials: { email: string; password: string }) => ({
-        url: '/api/v1/auth/login',
+        url: '/auth/login',
         method: 'POST',
         data: credentials,
       }),
@@ -12,14 +12,14 @@ export const authApi = baseApi.injectEndpoints({
     }),
     register: builder.mutation({
       query: (userData: { email: string; password: string; fullName?: string; phone?: string }) => ({
-        url: '/api/v1/auth/register',
+        url: '/auth/register',
         method: 'POST',
         data: userData,
       }),
     }),
     verifyOtp: builder.mutation({
       query: (data: { email: string; code: string }) => ({
-        url: '/api/v1/auth/verify-otp',
+        url: '/auth/verify-otp',
         method: 'POST',
         data,
       }),
@@ -27,41 +27,41 @@ export const authApi = baseApi.injectEndpoints({
     }),
     resendOtp: builder.mutation({
       query: (data: { email: string }) => ({
-        url: '/api/v1/auth/resend-otp',
+        url: '/auth/resend-otp',
         method: 'POST',
         data,
       }),
     }),
     forgotPassword: builder.mutation({
       query: (data: { email: string }) => ({
-        url: '/api/v1/auth/forgot-password',
+        url: '/auth/forgot-password',
         method: 'POST',
         data,
       }),
     }),
     resetPassword: builder.mutation({
       query: (data: { email: string; code: string; password: string }) => ({
-        url: '/api/v1/auth/reset-password',
+        url: '/auth/reset-password',
         method: 'POST',
         data,
       }),
     }),
     refreshToken: builder.mutation({
       query: () => ({
-        url: '/api/v1/auth/refresh',
+        url: '/auth/refresh',
         method: 'POST',
       }),
       invalidatesTags: ['Auth'],
     }),
     logoutApi: builder.mutation({
       query: () => ({
-        url: '/api/v1/auth/logout',
+        url: '/auth/logout',
         method: 'POST',
       }),
       invalidatesTags: ['Auth'],
     }),
     getMe: builder.query({
-      query: () => '/api/v1/auth/me',
+      query: () => '/auth/me',
       providesTags: ['Auth'],
     }),
   }),

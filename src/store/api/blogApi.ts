@@ -30,16 +30,16 @@ export interface CreateBlogPostInput {
 export const blogApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getBlogPosts: builder.query<BlogPost[], void>({
-      query: () => '/api/v1/blog',
+      query: () => '/blog',
       providesTags: ['Blog'],
     }),
     getBlogPostBySlug: builder.query<BlogPost, string>({
-      query: (slug) => `/api/v1/blog/${slug}`,
+      query: (slug) => `/blog/${slug}`,
       providesTags: (result, error, slug) => [{ type: 'Blog', id: slug }],
     }),
     createBlogPost: builder.mutation<BlogPost, CreateBlogPostInput>({
       query: (data) => ({
-        url: '/api/v1/blog',
+        url: '/blog',
         method: 'POST',
         body: data,
       }),
@@ -47,7 +47,7 @@ export const blogApi = baseApi.injectEndpoints({
     }),
     updateBlogPost: builder.mutation<BlogPost, { id: string; data: Partial<CreateBlogPostInput> }>({
       query: ({ id, data }) => ({
-        url: `/api/v1/blog/${id}`,
+        url: `/blog/${id}`,
         method: 'PATCH',
         body: data,
       }),
@@ -55,14 +55,14 @@ export const blogApi = baseApi.injectEndpoints({
     }),
     deleteBlogPost: builder.mutation<{ success: boolean }, string>({
       query: (id) => ({
-        url: `/api/v1/blog/${id}`,
+        url: `/blog/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Blog'],
     }),
     uploadBlogImage: builder.mutation<{ url: string }, FormData>({
       query: (formData) => ({
-        url: '/api/v1/blog/upload-image',
+        url: '/blog/upload-image',
         method: 'POST',
         body: formData,
       }),
