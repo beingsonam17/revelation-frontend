@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   useGetBlogPostsQuery,
   useCreateBlogPostMutation,
@@ -33,6 +34,11 @@ export function BlogsTab() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [editingPost, setEditingPost] = useState<any>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -206,9 +212,9 @@ export function BlogsTab() {
         ))}
       </div>
 
-      {/* Fullscreen Editor Modal */}
-      {showModal && (
-        <div className="fixed inset-0 z-[999] bg-slate-950/95 backdrop-blur-xl overflow-y-auto p-4 sm:p-6 my-0">
+      {/* Fullscreen Editor Modal — rendered via portal directly on document.body */}
+      {showModal && mounted && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-slate-950/95 backdrop-blur-xl overflow-y-auto p-4 sm:p-6" style={{ isolation: 'isolate' }}>
           <div className="max-w-5xl mx-auto bg-slate-900 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative">
             <button
               onClick={() => setShowModal(false)}
@@ -323,7 +329,7 @@ export function BlogsTab() {
             </form>
           </div>
         </div>
-      )}
+      , document.body)}
     </div>
   );
 }

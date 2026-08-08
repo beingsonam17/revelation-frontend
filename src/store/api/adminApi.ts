@@ -31,6 +31,16 @@ export const adminApi = baseApi.injectEndpoints({
         return [];
       },
     }),
+    getUsers: builder.query<AdminUser[], void>({
+      query: () => '/auth/users',
+      providesTags: ['Admin'],
+      transformResponse: (response: any) => {
+        if (Array.isArray(response)) return response;
+        if (Array.isArray(response?.users)) return response.users;
+        if (Array.isArray(response?.data)) return response.data;
+        return [];
+      },
+    }),
     createAdmin: builder.mutation<AdminUser, CreateAdminDto>({
       query: (data) => ({
         url: '/auth/admin/create',
@@ -53,12 +63,21 @@ export const adminApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Admin'],
     }),
+    toggleUserActive: builder.mutation<AdminUser, string>({
+      query: (id) => ({
+        url: `/auth/users/${id}/toggle-active`,
+        method: 'PATCH',
+      }),
+      invalidatesTags: ['Admin'],
+    }),
   }),
 });
 
 export const {
   useGetAdminsQuery,
+  useGetUsersQuery,
   useCreateAdminMutation,
   useDeleteAdminMutation,
   useToggleActiveAdminMutation,
+  useToggleUserActiveMutation,
 } = adminApi;

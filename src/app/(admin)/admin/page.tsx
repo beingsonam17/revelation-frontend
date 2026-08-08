@@ -10,6 +10,7 @@ import { BookingsTab } from '@/components/admin/BookingsTab';
 import { InquiriesTab } from '@/components/admin/InquiriesTab';
 import { ReviewsTab } from '@/components/admin/ReviewsTab';
 import { AdminTeamTab } from '@/components/admin/AdminTeamTab';
+import { UsersTab } from '@/components/admin/UsersTab';
 import { useAppSelector } from '@/store';
 
 import {
@@ -32,7 +33,7 @@ import {
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
-  const [activeTab, setActiveTab] = useState<'overview' | 'settings' | 'blogs' | 'services' | 'bookings' | 'inquiries' | 'reviews' | 'team'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'settings' | 'blogs' | 'services' | 'bookings' | 'inquiries' | 'reviews' | 'team'>('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { data: statsData, refetch: refetchStats } = useGetAdminStatsQuery(undefined);
@@ -52,6 +53,7 @@ export default function AdminDashboardPage() {
 
   const navItems = [
     { id: 'overview', label: 'Overview Metrics', icon: LayoutDashboard },
+    { id: 'users', label: 'Registered Customers', icon: Users },
     { id: 'settings', label: 'Site Settings & Logo', icon: Building2 },
     { id: 'blogs', label: 'Blog & Articles', icon: BookOpen },
     { id: 'services', label: 'Pest Services', icon: Layers },
@@ -209,6 +211,9 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           )}
+
+          {/* USERS & CLIENTS TAB */}
+          {activeTab === 'users' && <UsersTab />}
 
           {/* SITE SETTINGS TAB */}
           {activeTab === 'settings' && <SiteSettingsTab />}
