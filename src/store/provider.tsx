@@ -9,7 +9,7 @@ import { setCredentials } from './slices/authSlice';
 function AuthInitializer({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const { data: userProfile, isSuccess } = useGetMeQuery(undefined, {
-    refetchOnMountOrChange: true,
+    refetchOnMountOrArgChange: true,
   });
 
   useEffect(() => {
