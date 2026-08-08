@@ -23,20 +23,26 @@ export const axiosBaseQuery = (
       const state = api.getState() as RootState;
       const token = state.auth?.token;
 
-      let url = '';
+      let rawUrl = '';
       let method: AxiosRequestConfig['method'] = 'GET';
       let data: AxiosRequestConfig['data'] = undefined;
       let params: AxiosRequestConfig['params'] = undefined;
       let headers: AxiosRequestConfig['headers'] = {};
 
       if (typeof arg === 'string') {
-        url = arg;
+        rawUrl = arg;
       } else if (arg && typeof arg === 'object' && 'url' in arg) {
-        url = arg.url;
+        rawUrl = arg.url;
         method = arg.method || 'GET';
         data = arg.data !== undefined ? arg.data : (arg as any).body;
         params = arg.params;
         headers = arg.headers || {};
+      }
+
+      // Automatically strip redundant /api/v1 prefix to prevent duplicate /api/v1/api/v1 URLs
+      let cleanUrl = rawUrl;
+      if (cleanUrl.startsWith('/api/v1')) {
+        cleanUrl = cleanUrl.replace(/^\/api\/v1/, '');
       }
 
       const requestHeaders = { ...headers };
@@ -45,7 +51,7 @@ export const axiosBaseQuery = (
       }
 
       const result = await axiosClient({
-        url: baseUrl + url,
+        url: baseUrl + cleanUrl,
         method,
         data,
         params,
@@ -55,10 +61,19 @@ export const axiosBaseQuery = (
       return { data: result.data };
     } catch (axiosError) {
       const err = axiosError as AxiosError;
+      const responseData = err.response?.data as any;
+
+      let userFacingError = responseData?.message || err.message || 'An unexpected error occurred.';
+
+      // Format raw NestJS / Express 404 or routing errors into user-friendly messages
+      if (typeof userFacingError === 'string' && (userFacingError.startsWith('Cannot POST') || userFacingError.startsWith('Cannot GET'))) {
+        userFacingError = 'Service endpoint unavailable. Please try again.';
+      }
+
       return {
         error: {
           status: err.response?.status,
-          data: (err.response?.data as any)?.message || err.message,
+          data: userFacingError,
         },
       };
     }
