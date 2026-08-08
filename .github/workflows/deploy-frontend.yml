@@ -92,7 +92,7 @@ jobs:
           
           $DOCKER_COMPOSE config
           $DOCKER_COMPOSE pull revelation-frontend
-          $DOCKER_COMPOSE up -d --remove-orphans revelation-frontend
+          $DOCKER_COMPOSE up -d revelation-frontend
 
       - name: Show running services
         env:
